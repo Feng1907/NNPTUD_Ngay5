@@ -10,6 +10,18 @@ router.get("/", async function (req, res, next) {
     res.send(roles);
 });
 
+// Get all users for a given role id
+router.get('/:id/users', async function (req, res, next) {
+    try {
+        const roleId = req.params.id;
+        const userModel = require('../schemas/users');
+        let users = await userModel.find({ role: roleId, isDeleted: false });
+        res.send(users);
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
+});
+
 
 router.get("/:id", async function (req, res, next) {
     try {

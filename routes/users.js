@@ -110,4 +110,42 @@ router.delete("/:id", async function (req, res, next) {
   }
 });
 
+// Enable user by email and username
+router.post("/enable", async function (req, res, next) {
+  try {
+    const { email, username } = req.body;
+    if (!email || !username) return res.status(400).send({ message: "email and username are required" });
+
+    let updated = await userModel.findOneAndUpdate(
+      { email: email.toLowerCase(), username: username, isDeleted: false },
+      { status: true },
+      { new: true }
+    );
+
+    if (!updated) return res.status(404).send({ message: "user not found" });
+    res.send(updated);
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
+});
+
+// Disable user by email and username
+router.post("/disable", async function (req, res, next) {
+  try {
+    const { email, username } = req.body;
+    if (!email || !username) return res.status(400).send({ message: "email and username are required" });
+
+    let updated = await userModel.findOneAndUpdate(
+      { email: email.toLowerCase(), username: username, isDeleted: false },
+      { status: false },
+      { new: true }
+    );
+
+    if (!updated) return res.status(404).send({ message: "user not found" });
+    res.send(updated);
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
+});
+
 module.exports = router;
